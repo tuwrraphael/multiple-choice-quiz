@@ -24,6 +24,9 @@ export class Quiz extends HTMLElement {
     private doneText: HTMLSpanElement;
     private saveError: HTMLDivElement;
     private saving: HTMLDivElement;
+    private questionSurface: HTMLDivElement;
+    private percent: HTMLSpanElement;
+    private total: HTMLSpanElement;
 
     constructor() {
         super();
@@ -41,6 +44,9 @@ export class Quiz extends HTMLElement {
         this.doneText = this.querySelector("#done");
         this.saveError = this.querySelector("#saveError");
         this.saving = this.querySelector("#saving");
+        this.total = this.querySelector("#total");
+        this.percent = this.querySelector("#percent");
+        this.questionSurface = this.querySelector(".question");
         this.decryptBtn.addEventListener("click", ev => {
             this.worker.postMessage({
                 type: "load",
@@ -87,9 +93,12 @@ export class Quiz extends HTMLElement {
                         c.reset();
                     }
                 });
+                this.total.innerText = `${newState.question.total} ${newState.question.total == 1 ? "time" : "times"}`;
+                this.percent.innerText = newState.question.total == 0 ? "" : `was answered ${Math.round(100 * (newState.question.correct / newState.question.total))}% correctly and`;
                 this.question = newState.question;
             }
             this.loading.style.display = newState.loading ? "block" : "none";
+            this.questionSurface.style.display = newState.question ? "block" : "none";
             this.encryptionKeyForm.style.display = newState.needKey ? "block" : "none";
             this.decryptFailed.style.display = newState.decryptFailed ? "block" : "none";
             this.nextBtn.style.display = newState.question && newState.reveal && !newState.done ? "inline" : "none";
