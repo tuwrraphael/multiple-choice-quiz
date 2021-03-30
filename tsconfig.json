@@ -1,0 +1,25 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "lib": [
+      "esnext",
+      "dom",
+      "WebWorker",
+      "DOM.Iterable"
+    ],
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "module": "esnext",
+    "target": "esnext",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "types": [
+      "@types/node",
+      "@types/webpack-env",
+      "@types/webappsec-credential-management"
+    ],
+    "allowSyntheticDefaultImports": true
+  },
+}

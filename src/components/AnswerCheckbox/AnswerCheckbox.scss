@@ -1,0 +1,73 @@
+.answer-checkbox {
+    &__input {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        opacity: 0;
+        cursor: inherit;
+        z-index: 1;
+
+        &+label {
+            flex-grow: 1;
+            text-align: center;
+            display: block;
+            padding: 0.5em;
+            padding-left: 1em;
+            border-radius: 0.5em;
+            background-color: lightgray;
+            box-sizing: border-box;
+            transition: background-color 0.1s ease-in-out;
+            cursor: pointer;
+        }
+
+        &:focus-visible+label {
+            border: 1px solid black;
+        }
+
+        &:checked+label {
+            background-color: lightblue;
+        }
+    }
+}
+
+.reveal {
+    .answer-checkbox__input+label {
+        background-color: lightcoral;
+    }
+
+    .answer-checkbox__input:checked+label.correct,
+    .answer-checkbox__input:not(:checked)+label.wrong {
+        background-color: lightgreen;
+    }
+}
+
+answer-checkbox {
+    min-width: 10em;
+    position: relative;
+    display: flex;
+}
+
+.answer-reveal {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0.5em;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+
+    &.correct {
+        background-color: green;
+    }
+
+    &.wrong {
+        background-color: red;
+    }
+}
+
+.reveal {
+    .answer-reveal {
+        display: inline;
+    }
+}

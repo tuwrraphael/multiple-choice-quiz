@@ -1,0 +1,27 @@
+<progress id="loading"></progress>
+<div id="decryptFailed" style="display: none;">
+    Decryption failed!
+</div>
+<div id="saveError" style="display: none;">
+    Error saving the results!
+</div>
+<div class="key" id="need-key" style="display: none;">
+    <h1>This quiz is encrypted</h1>
+    <p>Please enter the decryption key.</p>
+    <label for="key">Decryption key</label>
+    <input id="key">
+    <button id="decrypt">OK</button>
+</div>
+<div id="saving" style="visibility: hidden;">
+    Your results are being saved, do not close the app.
+</div>
+<div class="question">
+    <h1 id="question"></h1>
+</div>
+<form class="answers">
+</form>
+<div class="controls">
+    <button id="save" title="save the answers">save answers</button>
+    <button id="next" title="see the next question">see next question</button>
+    <span id="done" style="display: none;">Congratulations you are done!</span>
+</div>

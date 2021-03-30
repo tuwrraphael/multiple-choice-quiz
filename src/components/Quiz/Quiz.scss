@@ -1,0 +1,34 @@
+#saving {
+    font-size: 0.8em;
+}
+
+app-quiz {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.answers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0.5em;
+    max-width: 60em;
+    width: 100%;
+}
+
+.question {
+    text-align: center;
+}
+
+.controls {
+    padding: 1em;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
+
+    button {
+        max-width: 10em;
+        width: 100%;
+    }
+}
