@@ -12,7 +12,8 @@ body {
 }
 
 .quizzes,
-.initializing {
+.initializing,
+.updateready {
     display: flex;
     align-items: center;
     justify-content: center;

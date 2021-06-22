@@ -21,8 +21,19 @@
     <div class="initializing" style="display: none;" id="initializing">
         <progress>Inizializing</progress>
     </div>
+    <div class="updateready" style="display: none;" id="updateready">
+        A new version is available 😎
+        <button id="update-btn">Update</button>
+    </div>
     <div style="display:none" class="quizzes" id="quizzes">
-        <h1>Choose a quiz</h1>
+        <h1>Multiple Choice Quiz</h1>
+        <h2>1. Quiz Settings</h2>
+        <label for="number-of-questions">Number of questions from the pool</label>
+        <input id="number-of-questions" type="number" min="1" value="50">
+        <label for="repeat-questions">Repeat each question</label>
+        <input id="repeat-questions" type="number" min="1" value="2">
+        <span>times</span>
+        <h2>2. Choose Quiz</h2>
         <ol>
             <li>
                 <a href="#testquiz" class="openquiz" data-file="testquiz.encrypted.bin">TestQuiz</a>

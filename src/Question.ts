@@ -9,4 +9,5 @@ export interface Question {
     answers: Answer[];
     correct: number;
     total: number;
+    repeat : number;
 }

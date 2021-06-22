@@ -79,7 +79,7 @@ export class Quiz extends HTMLElement {
 
     }
 
-    async initialize(access_token: string, spreadsheetId: string, quizfile: string) {
+    async initialize(access_token: string, spreadsheetId: string, quizfile: string, quizSettings: { numberOfQuestions: number, repeat: number }) {
         this.access_token = access_token;
         this.spreadsheetId = spreadsheetId;
         this.quizfile = quizfile;
@@ -112,7 +112,8 @@ export class Quiz extends HTMLElement {
             type: "load",
             access_token: access_token,
             spreadsheetId: spreadsheetId,
-            quizfile: quizfile
+            quizfile: quizfile,
+            quizSettings: quizSettings
         });
     }
 }

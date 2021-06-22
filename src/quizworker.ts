@@ -2,15 +2,14 @@ import { Question } from "./Question";
 import { State } from "./State";
 import { Debouncer } from "./utils/Debouncer";
 
-interface AnsweredQuestion extends Question {
-    userAnswers: boolean[];
-}
+interface AnsweredQuestion { id: number, correct: number, total: number }
 
 let currentQuiz: Question[];
 let answeredQuestions: AnsweredQuestion[];
 let currentAccessToken: string = null;
 let currentSheetId: string = null;
 let currentQuizId: string = null;
+let repeat = 0;
 let state: State = {
     loading: true,
     question: null,
@@ -53,7 +52,7 @@ function nextQuestion() {
     });
 }
 
-async function initialize(access_token: string, spreadsheetId: string, quizfile: string, decryptionKey?: string) {
+async function initialize(access_token: string, spreadsheetId: string, quizfile: string, quizSettings: { numberOfQuestions: number, repeat: number }, decryptionKey?: string) {
     stateChange(s => {
         return {
             ...s,
@@ -101,6 +100,14 @@ async function initialize(access_token: string, spreadsheetId: string, quizfile:
         }
         return a.total - b.total;
     });
+    if (quizSettings.numberOfQuestions < 1 || quizSettings.numberOfQuestions > currentQuiz.length) {
+        quizSettings.numberOfQuestions = currentQuiz.length;
+    }
+    if (quizSettings.repeat < 0) {
+        quizSettings.repeat == 0;
+    }
+    currentQuiz = currentQuiz.slice(0, quizSettings.numberOfQuestions);
+    repeat = quizSettings.repeat;
     nextQuestion();
     currentAccessToken = access_token;
     currentSheetId = spreadsheetId;
@@ -211,7 +218,8 @@ async function* loadAndDecryptQuiz(quizfile: string, decryptionKey: string) {
                     answers: [],
                     id: parseInt(line.substr(1)),
                     correct: 0,
-                    total: 0
+                    total: 0,
+                    repeat: 0
                 };
             }
             else if (question != null && question.text == null) {
@@ -253,16 +261,29 @@ let debouncer = new Debouncer();
 let lastSync = 0;
 
 async function save(userAnswers: boolean[]) {
-    stateChange(s => { return { ...s, reveal: true, unsaved: true }; });
-    answeredQuestions.push({ ...state.question, userAnswers: userAnswers });
+    let iscorrect = !state.question.answers.map((a, idx) => userAnswers[idx] == a.correct).some(v => !v);
+    state.question.correct = iscorrect ? state.question.correct + 1 : state.question.correct;
+    state.question.total += 1;
+    if (state.question.repeat < repeat) {
+        state.question.repeat += 1;
+        currentQuiz.push(state.question);
+    }
+    stateChange(s => { return { ...s, reveal: true, unsaved: true, done: currentQuiz.length < 1 }; });
+    answeredQuestions.push({ id: state.question.id, correct: state.question.correct, total: state.question.total });
     try {
         await debouncer.trigger(Math.max(5000, 30000 - (+new Date() - lastSync)));
     }
     catch {
         return;
     }
-    let processing = Array.from(answeredQuestions);
+    let proc = Array.from(answeredQuestions);
     answeredQuestions = [];
+    let updates: AnsweredQuestion[] = [];
+    for (let q of proc) {
+        if (!proc.find(q2 => q.id == q2.id && q2.total > q.total)) {
+            updates.push(q);
+        }
+    }
     let res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${currentSheetId}/values:batchUpdate`, {
         headers: {
             "Authorization": `Bearer ${currentAccessToken}`,
@@ -271,13 +292,12 @@ async function save(userAnswers: boolean[]) {
         method: "POST",
         body: JSON.stringify({
             valueInputOption: "RAW",
-            data: processing.map(q => {
-                let iscorrect = !q.answers.map((a, idx) => q.userAnswers[idx] == a.correct).some(v => !v);
+            data: updates.map(q => {
                 return {
                     range: `${currentQuizId}!A${q.id}:B${q.id}`,
                     "majorDimension": "ROWS",
                     "values": [
-                        [iscorrect ? (q.correct + 1) : q.correct, q.total + 1]
+                        [q.correct, q.total]
                     ]
                 };
             })
@@ -286,7 +306,7 @@ async function save(userAnswers: boolean[]) {
     if (res.ok) {
         stateChange(s => { return { ...s, unsaved: false, saveerror: false }; });
     } else {
-        for (let q of processing) {
+        for (let q of updates) {
             answeredQuestions.push(q);
         }
         stateChange(s => { return { ...s, saverror: true }; });
@@ -296,7 +316,7 @@ async function save(userAnswers: boolean[]) {
 
 self.addEventListener("message", ev => {
     if (ev.data.type == "load") {
-        initialize(ev.data.access_token, ev.data.spreadsheetId, ev.data.quizfile, ev.data.decryptionKey);
+        initialize(ev.data.access_token, ev.data.spreadsheetId, ev.data.quizfile, ev.data.quizSettings, ev.data.decryptionKey);
     } else if (ev.data.type == "save") {
         save(ev.data.userAnswers);
     } else if (ev.data.type == "next") {
