@@ -11,3 +11,6 @@ F:Wrong1
 T:Correct1
 T:Correct2
 F:Wrong2
+#3 Drinking water:
+F: consists only of $H_2O$ molecules
+T: True
