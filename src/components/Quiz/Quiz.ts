@@ -1,4 +1,5 @@
 import { Answer, Question } from "../../Question";
+import { renderText } from "../../renderText";
 import { State } from "../../State";
 import { ArrayToElementRenderer } from "../../utils/ArrayToElementRenderer";
 import { AnswerCheckbox } from "../AnswerCheckbox/AnswerCheckbox";
@@ -86,7 +87,7 @@ export class Quiz extends HTMLElement {
         this.worker.addEventListener("message", ev => {
             let newState: State = ev.data;
             if (newState.question) {
-                this.questionText.innerText = newState.question.text;
+                this.questionText.innerHTML = renderText(newState.question.text);
                 this.answerRenderer.update(newState.question.answers.map((a, idx) => [idx, a]), (c, d) => {
                     c.setData(d[0], d[1], newState.reveal);
                     if (!this.question || this.question.id != newState.question.id) {

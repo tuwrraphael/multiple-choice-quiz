@@ -39,7 +39,7 @@ export class Login extends HTMLElement {
                         "https://accounts.google.com"
                     ]
                 },
-                mediation: "silent"
+                mediation: "optional"
             }).then(c => {
                 if (c && c.type == "federated") {
                     this.loginHintInput.value = c.id;

@@ -1,4 +1,5 @@
 import { Answer } from "../../Question";
+import { renderText } from "../../renderText";
 import template from "./AnswerCheckbox.html";
 import "./AnswerCheckbox.scss";
 
@@ -28,7 +29,7 @@ export class AnswerCheckbox extends HTMLElement {
 
     setData(idx: number, a: Answer, reveal: boolean) {
         this.label.setAttribute("for", this.input.id = `answer-${idx}`);
-        this.label.innerText = a.text;
+        this.label.innerHTML = renderText(a.text);
         this.input.name = "" + idx;
         this.input.disabled = reveal;
         if (reveal) {
