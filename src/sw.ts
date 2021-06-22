@@ -18,13 +18,13 @@ self.addEventListener("install", function (event) {
             acc.asset.push(next.url);
         }
         else if (next.url.indexOf("quizzes/") > -1) {
-
+            acc.quizzes.push(next.url)
         }
         else {
             acc.code.push(next.url);
         }
         return acc;
-    }, { asset: [], code: [] });
+    }, { asset: [], code: [], quizzes: [] });
     let definedCaches = [
         {
             name: cacheNames.code,
@@ -42,6 +42,10 @@ self.addEventListener("install", function (event) {
             assets: ["https://fonts.googleapis.com/icon?family=Material+Icons",
                 "https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
             ]
+        },
+        {
+            name: cacheNames.quizzes,
+            assets: dividedAssets.quizzes
         }
     ];
     event.waitUntil((async () => {
