@@ -28,6 +28,7 @@ export class Quiz extends HTMLElement {
     private questionSurface: HTMLDivElement;
     private percent: HTMLSpanElement;
     private total: HTMLSpanElement;
+    quizSettings: { numberOfQuestions: number; repeat: number; };
 
     constructor() {
         super();
@@ -54,7 +55,8 @@ export class Quiz extends HTMLElement {
                 access_token: this.access_token,
                 spreadsheetId: this.spreadsheetId,
                 quizfile: this.quizfile,
-                decryptionKey: this.keyInput.value
+                decryptionKey: this.keyInput.value,
+                quizSettings: this.quizSettings
             });
         });
         this.nextBtn.addEventListener("click", () => {
@@ -83,6 +85,7 @@ export class Quiz extends HTMLElement {
         this.access_token = access_token;
         this.spreadsheetId = spreadsheetId;
         this.quizfile = quizfile;
+        this.quizSettings = quizSettings;
         this.worker = new Worker(new URL("../../quizworker", import.meta.url));
         this.worker.addEventListener("message", ev => {
             let newState: State = ev.data;
