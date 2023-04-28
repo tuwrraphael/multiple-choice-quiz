@@ -10,7 +10,7 @@ const fs = require("fs");
 const path = require('path');
 
 
-const allowedChars = /[^a-zA-Z0-9/]|-/g;
+const allowedChars = /[^a-zA-Z0-9/-]/g;
 function getRevision() {
     const rev = fs.readFileSync('.git/HEAD').toString();
     if (rev.indexOf(':') === -1) {
@@ -44,6 +44,21 @@ module.exports = (env, argv) => {
     };
 
     const cacheName = production ? getRevision() : "development";
+
+    let scssRules = [
+        { loader: "postcss-loader", options: {} },
+        {
+            loader: "sass-loader", options: {
+                implementation: require('sass'),
+                sassOptions: {
+                    includePaths: ["node_modules"],
+                },
+            }
+        }
+    ];
+
+    let cssLoader = production ? MiniCssExtractPlugin.loader : "style-loader";
+
     return {
         target: production ? "browserslist" : "web",
         entry: {
@@ -63,12 +78,11 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.tsx?$/,
-                    use: [
-                    //     {
-                    //     loader: 'babel-loader',
-                    //     options: babelConfig,
+                    use: [{
+                        loader: 'babel-loader',
+                        options: babelConfig,
 
-                    // },
+                    },
                         "ts-loader"],
                     exclude: /node_modules/,
                 },
@@ -84,21 +98,30 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.s[ac]ss$/i,
-                    use: [
-                        MiniCssExtractPlugin.loader,
+                    oneOf: [
                         {
-                            loader: "css-loader", options: {
-
-                            }
-                        },
-                        { loader: "postcss-loader", options: {} },
-                        {
-                            loader: "sass-loader", options: {
-                                implementation: require('sass'),
-                                sassOptions: {
-                                    includePaths: ["node_modules"],
+                            assert: {
+                                type: "css"
+                            },
+                            rules: [
+                                {
+                                    loader: "css-loader",
+                                    options: {
+                                        exportType: "string",
+                                    }
                                 },
-                            }
+                                ...scssRules
+                            ]
+                        }, {
+                            use: [
+                                cssLoader,
+                                {
+                                    loader: "css-loader", options: {
+
+                                    }
+                                },
+                                ...scssRules
+                            ]
                         }
                     ]
                 },
@@ -115,8 +138,11 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new HtmlWebpackPlugin({
-                base: base, title: "MultipleChoiceQuiz",
+                base: base,
+                title: "MultipleChoiceQuiz",
                 template: 'src/index.html'
+                // scriptLoading: "blocking",
+                // inject: false
             }),
             new LicenseCheckerWebpackPlugin({
                 outputFilename: "licenses.txt",
@@ -153,6 +179,12 @@ module.exports = (env, argv) => {
             port: 9000,
             historyApiFallback: {
                 index: "/"
+            },
+            client: {
+                overlay: {
+                    warnings: false,
+                    errors: true
+                }
             }
         }
     };
