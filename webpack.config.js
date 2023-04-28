@@ -140,9 +140,9 @@ module.exports = (env, argv) => {
             new HtmlWebpackPlugin({
                 base: base,
                 title: "MultipleChoiceQuiz",
-                template: 'src/index.html'
-                // scriptLoading: "blocking",
-                // inject: false
+                template: 'src/index.html',
+                scriptLoading: "blocking",
+                inject: false
             }),
             new LicenseCheckerWebpackPlugin({
                 outputFilename: "licenses.txt",

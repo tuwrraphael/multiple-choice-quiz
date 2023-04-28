@@ -9,7 +9,7 @@ let cacheNames = {
     code: `code-${__CACHENAME}`,
     asset: "asset-v1",
     webfont: "webfont",
-    quizzes: "quizzes"
+    quizzes: "quizzes-v2"
 };
 
 self.addEventListener("install", function (event) {
