@@ -29,8 +29,7 @@ self.addEventListener("install", function (event) {
         {
             name: cacheNames.code,
             assets: [
-                ...dividedAssets.code,
-                "index.html"
+                ...dividedAssets.code
             ]
         },
         {
